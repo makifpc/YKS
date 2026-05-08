@@ -6,7 +6,6 @@ import { calismaSchema, CalismaFormData } from '@/lib/validation';
 import { useCalisma } from '@/hooks/useCalisma';
 import { getDersler } from '@/lib/constants';
 import { today } from '@/lib/utils';
-import { useRouter } from 'next/navigation';
 import { CheckCircle } from 'lucide-react';
 
 const TUR_OPTIONS = [
@@ -17,7 +16,6 @@ const TUR_OPTIONS = [
 
 export default function CalismaFormu() {
   const { ekle } = useCalisma();
-  const router = useRouter();
   const [success, setSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -68,8 +66,6 @@ export default function CalismaFormu() {
       setTimeout(() => setSuccess(false), 3000);
     }
   }
-
-  void router;
 
   const inputClass = "w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-colors";
   const labelClass = "block text-sm text-gray-300 mb-1";
