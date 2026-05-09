@@ -48,15 +48,16 @@ export default function CalismaFormu() {
 
   async function onSubmit(data: CalismaFormData) {
     setSubmitting(true);
+    const konuCalismasi = data.tur === 'konu_calismasi';
     const payload = {
       ...data,
       sinav_turu: data.sinav_turu || null,
-      soru_sayisi: data.soru_sayisi ?? null,
-      dogru: data.dogru ?? null,
-      yanlis: data.yanlis ?? null,
-      bos: data.bos ?? null,
+      soru_sayisi: konuCalismasi ? null : (data.soru_sayisi ?? null),
+      dogru: konuCalismasi ? null : (data.dogru ?? null),
+      yanlis: konuCalismasi ? null : (data.yanlis ?? null),
+      bos: konuCalismasi ? null : (data.bos ?? null),
       notlar: data.notlar || null,
-      tam_deneme: data.tam_deneme ?? null,
+      tam_deneme: data.tur === 'deneme' ? (data.tam_deneme ?? null) : null,
     };
     const ok = await ekle(payload as never);
     setSubmitting(false);
@@ -93,21 +94,31 @@ export default function CalismaFormu() {
                   : 'border-gray-700 text-gray-400 hover:border-gray-500'
               }`}
             >
-              <input
-                type="radio"
-                className="hidden"
-                value={opt.value}
-                {...register('tur')}
-                onChange={e => {
-                  setValue('tur', e.target.value as CalismaFormData['tur']);
-                  setValue('ders', '');
-                  setValue('konu', '');
-                  setValue('kaynak', '');
-                }}
-              />
-              {opt.label}
-            </label>
-          ))}
+                <input
+                  type="radio"
+                  className="hidden"
+                  value={opt.value}
+                  {...register('tur')}
+                  onChange={e => {
+                    const yeniTur = e.target.value as CalismaFormData['tur'];
+                    setValue('tur', yeniTur);
+                    setValue('ders', '');
+                    setValue('konu', '');
+                    setValue('kaynak', '');
+                    if (yeniTur === 'konu_calismasi') {
+                      setValue('soru_sayisi', null);
+                      setValue('dogru', null);
+                      setValue('yanlis', null);
+                      setValue('bos', null);
+                    }
+                    if (yeniTur !== 'deneme') {
+                      setValue('tam_deneme', null);
+                    }
+                  }}
+                />
+                {opt.label}
+              </label>
+            ))}
         </div>
       </div>
 
@@ -166,6 +177,7 @@ export default function CalismaFormu() {
                 Bölüm Denemesi
               </label>
             </div>
+            {errors.tam_deneme && <p className={errorClass}>{errors.tam_deneme.message}</p>}
           </div>
         </>
       )}
