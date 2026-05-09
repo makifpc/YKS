@@ -14,6 +14,7 @@ function getServerClient() {
 const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID || '';
 const COL_ID = process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ID || '';
 
+// Next.js 15'te dinamik route params Promise olarak gelir.
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   if (!isRequestAuthenticated(req)) {
     return NextResponse.json({ error: 'Yetkisiz işlem' }, { status: 401 });

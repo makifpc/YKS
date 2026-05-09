@@ -1,6 +1,6 @@
 # YKS Çalışma Takip
 
-Türkçe, tablet uyumlu YKS çalışma takip uygulaması (Next.js + TypeScript + Appwrite).
+Türkçe ve tablet uyumlu bir YKS çalışma takip uygulaması (Next.js + TypeScript + Appwrite).
 
 ## Gerekli minimum kurulum
 

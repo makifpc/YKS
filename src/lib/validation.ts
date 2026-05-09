@@ -16,14 +16,18 @@ export const calismaSchema = z.object({
   tam_deneme: z.boolean().nullable().optional(),
 }).superRefine((data, ctx) => {
   if (data.tur === 'konu_calismasi') {
-    if (data.soru_sayisi != null) {
+    if (data.soru_sayisi !== null && data.soru_sayisi !== undefined) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['soru_sayisi'],
         message: 'Konu çalışmasında soru sayısı girilmez',
       });
     }
-    if (data.dogru != null || data.yanlis != null || data.bos != null) {
+    if (
+      (data.dogru !== null && data.dogru !== undefined) ||
+      (data.yanlis !== null && data.yanlis !== undefined) ||
+      (data.bos !== null && data.bos !== undefined)
+    ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['dogru'],
@@ -32,7 +36,7 @@ export const calismaSchema = z.object({
     }
   }
 
-  if (data.tur === 'deneme' && data.tam_deneme == null) {
+  if (data.tur === 'deneme' && (data.tam_deneme === null || data.tam_deneme === undefined)) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ['tam_deneme'],
@@ -40,7 +44,7 @@ export const calismaSchema = z.object({
     });
   }
 
-  if (data.soru_sayisi != null) {
+  if (data.soru_sayisi !== null && data.soru_sayisi !== undefined) {
     const toplam = (data.dogru || 0) + (data.yanlis || 0) + (data.bos || 0);
     if (toplam > data.soru_sayisi) {
       ctx.addIssue({

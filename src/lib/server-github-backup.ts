@@ -3,6 +3,8 @@ interface BackupPayload {
   [key: string]: unknown;
 }
 
+const ISO_DATE_LENGTH = 10; // YYYY-MM-DD
+
 export async function backupCalismaToGitHub(id: string, data: BackupPayload): Promise<boolean> {
   const token = process.env.GITHUB_TOKEN;
   const owner = process.env.GITHUB_OWNER;
@@ -13,7 +15,7 @@ export async function backupCalismaToGitHub(id: string, data: BackupPayload): Pr
     return false;
   }
 
-  const safeDate = typeof data.tarih === 'string' ? data.tarih : new Date().toISOString().slice(0, 10);
+  const safeDate = typeof data.tarih === 'string' ? data.tarih : new Date().toISOString().slice(0, ISO_DATE_LENGTH);
   const path = `backup/calismalar/${safeDate}-${id}.json`;
   const content = Buffer.from(JSON.stringify(data, null, 2)).toString('base64');
 
