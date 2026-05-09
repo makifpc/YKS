@@ -29,7 +29,7 @@ export function useAuth() {
   }
 
   function logout() {
-    setAuthenticated(false);
+    fetch('/api/auth', { method: 'DELETE' }).catch(() => undefined);
     setAuth(false);
   }
 

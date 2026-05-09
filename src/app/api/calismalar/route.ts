@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Client, Databases, ID, Query } from 'node-appwrite';
+import { calismaSchema } from '@/lib/validation';
+import { isRequestAuthenticated } from '@/lib/server-auth';
+import { backupCalismaToGitHub } from '@/lib/server-github-backup';
 
 function getServerClient() {
   const client = new Client()
@@ -27,13 +30,25 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  if (!isRequestAuthenticated(req)) {
+    return NextResponse.json({ error: 'Yetkisiz işlem' }, { status: 401 });
+  }
+
   try {
     const body = await req.json();
+    const parsed = calismaSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Geçersiz veri', details: parsed.error.flatten() }, { status: 400 });
+    }
+
     const db = getServerClient();
     const doc = await db.createDocument(DB_ID, COL_ID, ID.unique(), {
-      ...body,
+      ...parsed.data,
       olusturulma: new Date().toISOString(),
     });
+
+    await backupCalismaToGitHub(doc.$id, doc);
+
     return NextResponse.json({ calisma: doc });
   } catch (error) {
     console.error('POST calisma error:', error);
