@@ -4,6 +4,7 @@ interface BackupPayload {
 }
 
 const ISO_DATE_LENGTH = 10; // YYYY-MM-DD
+const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 export async function backupCalismaToGitHub(id: string, data: BackupPayload): Promise<boolean> {
   const token = process.env.GITHUB_TOKEN;
@@ -15,7 +16,9 @@ export async function backupCalismaToGitHub(id: string, data: BackupPayload): Pr
     return false;
   }
 
-  const safeDate = typeof data.tarih === 'string' ? data.tarih : new Date().toISOString().slice(0, ISO_DATE_LENGTH);
+  const safeDate = typeof data.tarih === 'string' && ISO_DATE_PATTERN.test(data.tarih)
+    ? data.tarih
+    : new Date().toISOString().slice(0, ISO_DATE_LENGTH);
   const path = `backup/calismalar/${safeDate}-${id}.json`;
   const content = Buffer.from(JSON.stringify(data, null, 2)).toString('base64');
 
