@@ -12,9 +12,20 @@ function createSessionToken(): string {
 }
 
 function safeCompare(left: string, right: string): boolean {
-  const leftHash = createHash('sha256').update(left).digest();
-  const rightHash = createHash('sha256').update(right).digest();
-  return timingSafeEqual(leftHash, rightHash);
+  const leftBuffer = Buffer.from(left);
+  const rightBuffer = Buffer.from(right);
+
+  if (leftBuffer.length !== rightBuffer.length) {
+    const maxLength = Math.max(leftBuffer.length, rightBuffer.length);
+    const paddedLeft = Buffer.alloc(maxLength);
+    const paddedRight = Buffer.alloc(maxLength);
+    leftBuffer.copy(paddedLeft);
+    rightBuffer.copy(paddedRight);
+    timingSafeEqual(paddedLeft, paddedRight);
+    return false;
+  }
+
+  return timingSafeEqual(leftBuffer, rightBuffer);
 }
 
 export function hasSessionPassword(): boolean {

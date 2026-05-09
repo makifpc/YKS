@@ -28,7 +28,7 @@ export const calismaSchema = z.object({
     if (!isNullish(data.dogru) || !isNullish(data.yanlis) || !isNullish(data.bos)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: ['dogru'],
+        path: ['tur'],
         message: 'Konu çalışmasında doğru/yanlış/boş girilmez',
       });
     }
