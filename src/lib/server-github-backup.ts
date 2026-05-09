@@ -8,7 +8,10 @@ export async function backupCalismaToGitHub(id: string, data: BackupPayload): Pr
   const owner = process.env.GITHUB_OWNER;
   const repo = process.env.GITHUB_REPO;
 
-  if (!token || !owner || !repo) return false;
+  if (!token || !owner || !repo) {
+    console.warn('GitHub backup atlandı: GITHUB_TOKEN / GITHUB_OWNER / GITHUB_REPO eksik');
+    return false;
+  }
 
   const safeDate = typeof data.tarih === 'string' ? data.tarih : new Date().toISOString().slice(0, 10);
   const path = `backup/calismalar/${safeDate}-${id}.json`;
@@ -37,15 +40,26 @@ export async function backupCalismaToGitHub(id: string, data: BackupPayload): Pr
   };
   if (sha) body.sha = sha;
 
-  const writeRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
-    method: 'PUT',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/vnd.github+json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(body),
-  });
+  try {
+    const writeRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github+json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
 
-  return writeRes.ok;
+    if (!writeRes.ok) {
+      const detail = await writeRes.text();
+      console.error('GitHub backup başarısız:', writeRes.status, detail);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('GitHub backup isteği sırasında hata:', error);
+    return false;
+  }
 }

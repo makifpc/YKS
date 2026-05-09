@@ -47,7 +47,10 @@ export async function POST(req: NextRequest) {
       olusturulma: new Date().toISOString(),
     });
 
-    await backupCalismaToGitHub(doc.$id, doc);
+    const backupOk = await backupCalismaToGitHub(doc.$id, doc);
+    if (!backupOk) {
+      console.warn(`Kayıt oluşturuldu ancak GitHub yedeği başarısız: ${doc.$id}`);
+    }
 
     return NextResponse.json({ calisma: doc });
   } catch (error) {

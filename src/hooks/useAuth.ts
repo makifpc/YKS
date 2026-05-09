@@ -28,8 +28,12 @@ export function useAuth() {
     return false;
   }
 
-  function logout() {
-    fetch('/api/auth', { method: 'DELETE' }).catch(() => undefined);
+  async function logout() {
+    try {
+      await fetch('/api/auth', { method: 'DELETE' });
+    } catch {
+      // logout state is cleared locally regardless of request result
+    }
     setAuth(false);
   }
 
