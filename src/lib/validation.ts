@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+const isNullish = (value: unknown): value is null | undefined => value === null || value === undefined;
+
 export const calismaSchema = z.object({
   tarih: z.string().min(1, 'Tarih gerekli'),
   tur: z.enum(['konu_calismasi', 'soru_cozme', 'deneme']),
@@ -16,18 +18,14 @@ export const calismaSchema = z.object({
   tam_deneme: z.boolean().nullable().optional(),
 }).superRefine((data, ctx) => {
   if (data.tur === 'konu_calismasi') {
-    if (data.soru_sayisi !== null && data.soru_sayisi !== undefined) {
+    if (!isNullish(data.soru_sayisi)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['soru_sayisi'],
         message: 'Konu çalışmasında soru sayısı girilmez',
       });
     }
-    if (
-      (data.dogru !== null && data.dogru !== undefined) ||
-      (data.yanlis !== null && data.yanlis !== undefined) ||
-      (data.bos !== null && data.bos !== undefined)
-    ) {
+    if (!isNullish(data.dogru) || !isNullish(data.yanlis) || !isNullish(data.bos)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['dogru'],
@@ -36,7 +34,7 @@ export const calismaSchema = z.object({
     }
   }
 
-  if (data.tur === 'deneme' && (data.tam_deneme === null || data.tam_deneme === undefined)) {
+  if (data.tur === 'deneme' && isNullish(data.tam_deneme)) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ['tam_deneme'],
@@ -44,7 +42,7 @@ export const calismaSchema = z.object({
     });
   }
 
-  if (data.soru_sayisi !== null && data.soru_sayisi !== undefined) {
+  if (!isNullish(data.soru_sayisi)) {
     const toplam = (data.dogru || 0) + (data.yanlis || 0) + (data.bos || 0);
     if (toplam > data.soru_sayisi) {
       ctx.addIssue({

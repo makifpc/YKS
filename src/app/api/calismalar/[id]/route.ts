@@ -40,7 +40,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const body = await req.json();
     const parsed = calismaSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: 'Geçersiz veri', details: parsed.error.flatten() }, { status: 400 });
+      return NextResponse.json({ error: 'Geçersiz veri' }, { status: 400 });
     }
 
     const { id } = await params;

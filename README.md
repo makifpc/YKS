@@ -34,4 +34,19 @@ Yeni kayıtları otomatik GitHub’a yazdırmak için şu 3 alanı ekleyin:
 
 ## Appwrite koleksiyon alanları
 
-`tarih`, `tur`, `sinav_turu`, `ders`, `konu`, `kaynak`, `soru_sayisi`, `sure_dakika`, `dogru`, `yanlis`, `bos`, `notlar`, `tam_deneme`, `olusturulma`
+| Alan | Tip |
+|---|---|
+| `tarih` | string (`YYYY-MM-DD`) |
+| `tur` | string (`konu_calismasi` \| `soru_cozme` \| `deneme`) |
+| `sinav_turu` | string/null (`TYT` \| `AYT`) |
+| `ders` | string |
+| `konu` | string |
+| `kaynak` | string |
+| `soru_sayisi` | integer/null |
+| `sure_dakika` | integer |
+| `dogru` | integer/null |
+| `yanlis` | integer/null |
+| `bos` | integer/null |
+| `notlar` | string/null |
+| `tam_deneme` | boolean/null |
+| `olusturulma` | string (ISO datetime) |
