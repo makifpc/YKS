@@ -21,7 +21,8 @@ function safeCompare(left: string, right: string): boolean {
     const paddedRight = Buffer.alloc(maxLength);
     leftBuffer.copy(paddedLeft);
     rightBuffer.copy(paddedRight);
-    timingSafeEqual(paddedLeft, paddedRight);
+    const compared = timingSafeEqual(paddedLeft, paddedRight);
+    void compared;
     return false;
   }
 
